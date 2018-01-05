@@ -3,14 +3,14 @@ package diary.bean;
 import javax.persistence.*;
 
 /**
- * Created by MSI on 2017/12/27.
+ * Created by MSI on 2018/1/5.
  */
 @Entity
 @Table(name = "sys_arg")
 public class SysArg {
     private int argId;
     private String argContent;
-    private Integer argCategory;
+    private String argCategory;
 
     @Id
     @Column(name = "arg_id", nullable = false)
@@ -23,7 +23,7 @@ public class SysArg {
     }
 
     @Basic
-    @Column(name = "arg_content", nullable = true, length = 45)
+    @Column(name = "arg_content", nullable = true, length = 100)
     public String getArgContent() {
         return argContent;
     }
@@ -33,12 +33,12 @@ public class SysArg {
     }
 
     @Basic
-    @Column(name = "arg_category", nullable = true)
-    public Integer getArgCategory() {
+    @Column(name = "arg_category", nullable = true, length = 45)
+    public String getArgCategory() {
         return argCategory;
     }
 
-    public void setArgCategory(Integer argCategory) {
+    public void setArgCategory(String argCategory) {
         this.argCategory = argCategory;
     }
 

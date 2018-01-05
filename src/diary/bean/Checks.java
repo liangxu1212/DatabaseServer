@@ -4,11 +4,11 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by MSI on 2017/12/27.
+ * Created by MSI on 2018/1/5.
  */
 @Entity
-@Table(name="check")
-public class Check {
+@Table(name="checks")
+public class Checks {
     private int checkId;
     private Integer clerkId;
     private Date checkTime;
@@ -70,13 +70,13 @@ public class Check {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Check check = (Check) o;
+        Checks checks = (Checks) o;
 
-        if (checkId != check.checkId) return false;
-        if (clerkId != null ? !clerkId.equals(check.clerkId) : check.clerkId != null) return false;
-        if (checkTime != null ? !checkTime.equals(check.checkTime) : check.checkTime != null) return false;
-        if (category != null ? !category.equals(check.category) : check.category != null) return false;
-        if (state != null ? !state.equals(check.state) : check.state != null) return false;
+        if (checkId != checks.checkId) return false;
+        if (clerkId != null ? !clerkId.equals(checks.clerkId) : checks.clerkId != null) return false;
+        if (checkTime != null ? !checkTime.equals(checks.checkTime) : checks.checkTime != null) return false;
+        if (category != null ? !category.equals(checks.category) : checks.category != null) return false;
+        if (state != null ? !state.equals(checks.state) : checks.state != null) return false;
 
         return true;
     }

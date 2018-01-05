@@ -1,6 +1,7 @@
 package diary.dao;
 
 import diary.bean.SysArg;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
 import javax.annotation.Resource;
@@ -16,5 +17,10 @@ public class SysArgDAO {
     }
     public void attachDirty(SysArg sysArg){
         sessionFactory.getCurrentSession().saveOrUpdate(sysArg);
+    }
+    public SysArg findByCategory(String category){
+        String hql="from SysArg where argCategory='"+category+"'";
+        Query q=this.sessionFactory.getCurrentSession().createQuery(hql);
+        return (SysArg) q.uniqueResult();
     }
 }
