@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by MSI on 2017/12/27.
+ * Created by MSI on 2018/1/6.
  */
 @Entity
-@Table(name="trip")
+@Table(name = "trip")
 public class Trip {
     private int tripId;
     private Integer clerkId;
@@ -17,6 +17,7 @@ public class Trip {
     private String comment;
     private Date applyTime;
     private Date updateTime;
+    private String content;
 
     @Id
     @Column(name = "trip_id", nullable = false)
@@ -98,6 +99,16 @@ public class Trip {
         this.updateTime = updateTime;
     }
 
+    @Basic
+    @Column(name = "content", nullable = true, length = 500)
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,6 +124,7 @@ public class Trip {
         if (comment != null ? !comment.equals(trip.comment) : trip.comment != null) return false;
         if (applyTime != null ? !applyTime.equals(trip.applyTime) : trip.applyTime != null) return false;
         if (updateTime != null ? !updateTime.equals(trip.updateTime) : trip.updateTime != null) return false;
+        if (content != null ? !content.equals(trip.content) : trip.content != null) return false;
 
         return true;
     }
@@ -127,6 +139,7 @@ public class Trip {
         result = 31 * result + (comment != null ? comment.hashCode() : 0);
         result = 31 * result + (applyTime != null ? applyTime.hashCode() : 0);
         result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
     }
 }

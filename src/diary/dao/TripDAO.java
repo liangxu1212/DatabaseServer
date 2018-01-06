@@ -19,8 +19,23 @@ public class TripDAO {
     public void attachDirty(Trip trip){
         sessionFactory.getCurrentSession().saveOrUpdate(trip);
     }
-    public List<Trip> search(String clerk,String department,String from,String to){
-        String hql="";
+    public Trip findTripById(String id){
+        String hql="from Trip where tripId="+id;
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (Trip) q.uniqueResult();
+    }
+    public List<Trip> search(String id,String from,String to){
+        String hql="from Trip where 1=1";
+        if(id!=null){
+            hql+=" and clerkId="+id;
+        }
+        if(from!=null){
+            hql+=" and applyTime>='"+from+"'";
+        }
+        if(to!=null){
+            hql+=" and applyTime<='"+to+"'";
+        }
+        System.out.println(hql);
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
     }

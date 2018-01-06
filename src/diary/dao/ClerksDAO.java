@@ -19,6 +19,7 @@ public class ClerksDAO {
     public void setSessionFactory(SessionFactory sessionFactory){
         this.sessionFactory=sessionFactory;
     }
+    public void attachDirty(Clerks clerks){this.sessionFactory.getCurrentSession().saveOrUpdate(clerks);}
     public Clerks findById(String id){
         String hql="from Clerks where clerkId="+id;
         System.out.println(hql);
