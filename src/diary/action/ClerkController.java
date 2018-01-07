@@ -3,10 +3,7 @@ package diary.action;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import diary.bean.Checks;
-import diary.bean.Clerks;
-import diary.bean.Leave;
-import diary.bean.Trip;
+import diary.bean.*;
 import diary.dao.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +32,9 @@ public class ClerkController {
     private SysArgDAO sysArgDAO;
     private TripDAO tripDAO;
     private LeaveDAO leaveDAO;
+    private HistoryDAO historyDAO;
+    @Resource
+    public void setHistoryDAO(HistoryDAO historyDAO){this.historyDAO=historyDAO;}
     @Resource
     public void setTripDAO(TripDAO tripDAO){this.tripDAO=tripDAO;}
     @Resource
@@ -76,6 +76,12 @@ public class ClerkController {
         else {
             jsonObject.put("data",clerks);
             jsonObject.put("status",200);
+            History h=new History();
+            h.setCategory(0);
+            h.setClerkId(clerks.getClerkId());
+            h.setHistoryTime(new Date());
+            h.setDescription("login");
+            historyDAO.attachDirty(h);
             writer.write(jsonObject.toJSONString());
             writer.flush();
         }
@@ -100,6 +106,12 @@ public class ClerkController {
         }
         clerks.setPassword(newpass);
         clerksDAO.attachDirty(clerks);
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(clerks.getClerkId());
+        h.setHistoryTime(new Date());
+        h.setDescription("modify_password");
+        historyDAO.attachDirty(h);
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
         writer.flush();
@@ -149,7 +161,7 @@ public class ClerkController {
         Date d=new Date();
         String from=daysdf.format(d)+" 00:00:00";
         String to=daysdf.format(d)+" 23:59:59";
-        if(checkDAO.listCheck(id,null,null,"0",from,to).size()!=0){
+        if(checkDAO.listCheck(id,null,"0",from,to).size()!=0){
             jsonObject.put("status",300);
             jsonObject.put("message","already checkin");
             writer.write(jsonObject.toJSONString());
@@ -174,6 +186,13 @@ public class ClerkController {
         check.setClerkId(Integer.parseInt(id));
         check.setState(state);
         checkDAO.attachDirty(check);
+
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(clerks.getClerkId());
+        h.setHistoryTime(new Date());
+        h.setDescription("check_in");
+        historyDAO.attachDirty(h);
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
         writer.flush();
@@ -208,7 +227,7 @@ public class ClerkController {
         Date d=new Date();
         String from=daysdf.format(d)+" 00:00:00";
         String to=daysdf.format(d)+" 23:59:59";
-        if(checkDAO.listCheck(id,null,null,"1",from,to).size()!=0){
+        if(checkDAO.listCheck(id,null,"1",from,to).size()!=0){
             jsonObject.put("status",300);
             jsonObject.put("message","already checkout");
             writer.write(jsonObject.toJSONString());
@@ -233,6 +252,12 @@ public class ClerkController {
         check.setClerkId(Integer.parseInt(id));
         check.setState(state);
         checkDAO.attachDirty(check);
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(clerks.getClerkId());
+        h.setHistoryTime(new Date());
+        h.setDescription("check_out");
+        historyDAO.attachDirty(h);
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
         writer.flush();
@@ -250,7 +275,7 @@ public class ClerkController {
         String department_id=request.getParameter("department_id");
         String from=request.getParameter("from");
         String to=request.getParameter("to");
-        ArrayList<Checks> list= (ArrayList<Checks>) checkDAO.listCheck(id,name,department_id,null,from,to);
+        ArrayList<Checks> list= (ArrayList<Checks>) checkDAO.listCheck(id,department_id,null,from,to);
         JSONArray array=new JSONArray();
         for(Checks checks:list){
             JSONObject json= JSON.parseObject(JSON.toJSONString(checks));
@@ -278,9 +303,17 @@ public class ClerkController {
         String category=request.getParameter("category");
         String content=request.getParameter("content");
         Leave l=new Leave();
+
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(Integer.valueOf(clerkid));
+        h.setHistoryTime(new Date());
+        h.setDescription("submit_leave");
         if(leaveId!=null) {
             l = leaveDAO.findLeaveById(leaveId);
+            h.setDescription("modify_leave");
         }
+        historyDAO.attachDirty(h);
         l.setClerkId(Integer.parseInt(clerkid));
         l.setCategory(Integer.parseInt(category));
         l.setContent(content);
@@ -304,9 +337,14 @@ public class ClerkController {
        String id=request.getParameter("id");
        String from=request.getParameter("from");
        String to=request.getParameter("to");
+       String departmentId=request.getParameter("department_id");
        ArrayList<Leave> list= (ArrayList<Leave>) leaveDAO.search(id,from,to);
        JSONArray array=new JSONArray();
        for(Leave leave:list){
+           if(departmentId!=null){
+               Clerks c=clerksDAO.findById(leave.getClerkId()+"");
+               if(c.getDepartmentId()!=Integer.valueOf(departmentId))continue;
+           }
            JSONObject json= JSON.parseObject(JSON.toJSONString(leave));
            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
            String apply = sdf.format(leave.getApplyTime());
@@ -333,7 +371,18 @@ public class ClerkController {
        String category=request.getParameter("category");
        String content=request.getParameter("content");
        Trip t=new Trip();
-       if(tripId!=null)t=tripDAO.findTripById(tripId);
+
+       History h=new History();
+       h.setCategory(0);
+       h.setClerkId(Integer.valueOf(clerkid));
+       h.setHistoryTime(new Date());
+       h.setDescription("submit_trip");
+
+       if(tripId!=null){
+           t=tripDAO.findTripById(tripId);
+           h.setDescription("modify_trip");
+       }
+       historyDAO.attachDirty(h);
        t.setCategory(Integer.parseInt(category));
        t.setClerkId(Integer.parseInt(clerkid));
        Date d=new Date();
@@ -356,9 +405,15 @@ public class ClerkController {
        String id=request.getParameter("id");
        String from=request.getParameter("from");
        String to=request.getParameter("to");
+       String departmentId=request.getParameter("department_id");
        ArrayList<Trip> list= (ArrayList<Trip>) tripDAO.search(id,from,to);
        JSONArray array=new JSONArray();
        for(Trip trip:list){
+
+           if(departmentId!=null){
+               Clerks c=clerksDAO.findById(trip.getClerkId()+"");
+               if(c.getDepartmentId()!=Integer.valueOf(departmentId))continue;
+           }
            JSONObject json= JSON.parseObject(JSON.toJSONString(trip));
            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
            String apply = sdf.format(trip.getApplyTime());

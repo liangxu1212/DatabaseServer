@@ -19,13 +19,10 @@ public class CheckDAO {
     public void attachDirty(Checks check){
         this.sessionFactory.getCurrentSession().saveOrUpdate(check);
     }
-    public List<Checks> listCheck(String id,String name, String department_id,String category, String from, String to){
+    public List<Checks> listCheck(String id, String department_id,String category, String from, String to){
         String hql="from Checks where 1=1";
         if(id!=null){
             hql+=" and clerkId="+id;
-        }
-        if(name!=null){
-            hql+=" and name like '%"+name+"%'";
         }
         if(department_id!=null){
             hql+=" and departmentId="+department_id;

@@ -55,6 +55,15 @@ public class AdminController {
         String commentId=request.getParameter("comment_id");
         String comment=request.getParameter("comment");
         String state=request.getParameter("state");
+
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(Integer.valueOf(commentId));
+        h.setHistoryTime(new Date());
+        if(state.equals("0"))h.setDescription("reject_leave");
+        else h.setDescription("approve_leave");
+        historyDAO.attachDirty(h);
+
         Leave l=leaveDAO.findLeaveById(leaveId);
         l.setUpdateTime(new Date());
         l.setState(Integer.parseInt(state));
@@ -77,6 +86,15 @@ public class AdminController {
         String commentId=request.getParameter("comment_id");
         String comment=request.getParameter("comment");
         String state=request.getParameter("state");
+
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(Integer.valueOf(commentId));
+        h.setHistoryTime(new Date());
+        if(state.equals("0"))h.setDescription("reject_trip");
+        else h.setDescription("approve_trip");
+        historyDAO.attachDirty(h);
+
         Trip t=tripDAO.findTripById(tripId);
         t.setUpdateTime(new Date());
         t.setState(Integer.parseInt(state));
@@ -99,13 +117,22 @@ public class AdminController {
         String clerkId=request.getParameter("clerk_id");
         String name=request.getParameter("name");
         Clerks clerks=new Clerks();
+
+        History h=new History();
+        h.setCategory(0);
+        h.setClerkId(0);
+        h.setHistoryTime(new Date());
+
         if(clerkId!=null){
             clerks=clerksDAO.findById(clerkId);
+            h.setDescription("modify_clerk");
         }else{
             clerks.setPassword("123456");
             clerks.setIdentity(3);
             clerks.setName(name);
+            h.setDescription("add_clerk");
         }
+        historyDAO.attachDirty(h);
         clerks.setDepartmentId(Integer.parseInt(departmentId));
         clerksDAO.attachDirty(clerks);
         jsonObject.put("status",200);
@@ -143,8 +170,14 @@ public class AdminController {
         String departmentName=request.getParameter("department_name");
         String managerId=request.getParameter("manager_id");
         Department department=new Department();
+        History h=new History();
+        h.setClerkId(0);
+        h.setCategory(0);
+        h.setHistoryTime(new Date());
+        h.setDescription("add_department");
         if(departmentId!=null){
             department=departmentDAO.findDepartmentById(departmentId);
+            h.setDescription("modify_department");
         }
         if(departmentName!=null){
             department.setDepartmentName(departmentName);
@@ -152,6 +185,7 @@ public class AdminController {
         if(managerId!=null){
             department.setManagerId(Integer.parseInt(managerId));
         }
+        historyDAO.attachDirty(h);
         departmentDAO.attachDirty(department);
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
@@ -201,7 +235,7 @@ public class AdminController {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        System.out.println("aduitTrip");
+        System.out.println("getCheckTime");
         PrintWriter writer=response.getWriter();
         JSONObject jsonObject=new JSONObject();
         SysArg in=sysArgDAO.findByCategory("checkin");
@@ -217,7 +251,7 @@ public class AdminController {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        System.out.println("aduitTrip");
+        System.out.println("modifyVacation");
         PrintWriter writer=response.getWriter();
         JSONObject jsonObject=new JSONObject();
         String kind=request.getParameter("kind");
@@ -240,7 +274,7 @@ public class AdminController {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        System.out.println("aduitTrip");
+        System.out.println("listVacation");
         PrintWriter writer=response.getWriter();
         JSONObject jsonObject=new JSONObject();
 
