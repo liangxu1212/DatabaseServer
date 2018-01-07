@@ -285,7 +285,9 @@ public class ClerkController {
         l.setCategory(Integer.parseInt(category));
         l.setContent(content);
         l.setState(1);
-        l.setApplyTime(new Date());
+        Date d=new Date();
+        l.setApplyTime(d);
+        l.setUpdateTime(d);
         leaveDAO.attachDirty(l);
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
@@ -334,7 +336,9 @@ public class ClerkController {
        if(tripId!=null)t=tripDAO.findTripById(tripId);
        t.setCategory(Integer.parseInt(category));
        t.setClerkId(Integer.parseInt(clerkid));
-       t.setApplyTime(new Date());
+       Date d=new Date();
+       t.setApplyTime(d);
+       t.setUpdateTime(d);
        t.setContent(content);
        tripDAO.attachDirty(t);
        jsonObject.put("status",200);

@@ -1,9 +1,11 @@
 package diary.dao;
 
 import diary.bean.History;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by MSI on 2017/12/27.
@@ -16,5 +18,17 @@ public class HistoryDAO {
     }
     public void attachDirty(History history){
         sessionFactory.getCurrentSession().saveOrUpdate(history);
+    }
+
+    public List<History> listHistory(String from,String to){
+        String hql="from History where 1=1";
+        if(from!=null){
+            hql+=" and where historyTime>='"+from+"'";
+        }
+        if(to!=null){
+            hql+=" and where historyTime<='"+to+"'";
+        }
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return q.list();
     }
 }

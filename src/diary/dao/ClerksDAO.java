@@ -26,13 +26,16 @@ public class ClerksDAO {
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return (Clerks) q.uniqueResult();
     }
-    public List<Clerks> listClerks(String id,String name,String department_id){
+    public List<Clerks> listClerks(String id,String name,String identity,String department_id){
         String hql="from Clerks where 1=1";
         if(id!=null){
             hql+=" and clerkId="+id;
         }
         if(name!=null){
             hql+=" and name like '%"+name+"%'";
+        }
+        if(identity!=null){
+            hql+=" and identity="+identity;
         }
         if(department_id!=null){
             hql+=" and departmentId="+department_id;
