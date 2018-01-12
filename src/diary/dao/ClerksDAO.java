@@ -43,4 +43,9 @@ public class ClerksDAO {
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
     }
+    public int max(){
+        String hql="select max(clerkId) from Clerks ";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
+    }
 }

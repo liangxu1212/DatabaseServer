@@ -64,7 +64,7 @@ public class AdminController {
         else h.setDescription("approve_leave");
         historyDAO.attachDirty(h);
 
-        Leave l=leaveDAO.findLeaveById(leaveId);
+        Leaves l=leaveDAO.findLeaveById(leaveId);
         l.setUpdateTime(new Date());
         l.setState(Integer.parseInt(state));
         l.setComment(comment);
@@ -126,7 +126,9 @@ public class AdminController {
         if(clerkId!=null){
             clerks=clerksDAO.findById(clerkId);
             h.setDescription("modify_clerk");
+
         }else{
+            clerks.setClerkId(clerksDAO.max()+1);
             clerks.setPassword("123456");
             clerks.setIdentity(3);
             clerks.setName(name);
@@ -136,6 +138,8 @@ public class AdminController {
         clerks.setDepartmentId(Integer.parseInt(departmentId));
         clerksDAO.attachDirty(clerks);
         jsonObject.put("status",200);
+        writer.write(jsonObject.toJSONString());
+        writer.flush();
     }
     @RequestMapping(value="listClerk",method=RequestMethod.POST)
     public void listClerk(HttpServletRequest request,HttpServletResponse response)throws  IOException{
@@ -178,15 +182,22 @@ public class AdminController {
         if(departmentId!=null){
             department=departmentDAO.findDepartmentById(departmentId);
             h.setDescription("modify_department");
+        }else{
+            department.setDepartmentId(departmentDAO.max()+1);
         }
         if(departmentName!=null){
             department.setDepartmentName(departmentName);
         }
         if(managerId!=null){
             department.setManagerId(Integer.parseInt(managerId));
+            Clerks clerks=clerksDAO.findById(managerId);
+            clerks.setIdentity(2);
+            clerks.setDepartmentId(Integer.valueOf(departmentId));
+            clerksDAO.attachDirty(clerks);
         }
         historyDAO.attachDirty(h);
         departmentDAO.attachDirty(department);
+        System.out.println(JSON.toJSONString(department));
         jsonObject.put("status",200);
         writer.write(jsonObject.toJSONString());
         writer.flush();
@@ -258,6 +269,7 @@ public class AdminController {
         String time=request.getParameter("time");
         if(kind.equals("add")){
             SysArg sysArg=new SysArg();
+            sysArg.setArgId(sysArgDAO.max()+1);
             sysArg.setArgContent(time);
             sysArg.setArgCategory("vacation");
             sysArgDAO.attachDirty(sysArg);

@@ -27,4 +27,9 @@ public class DepartmentDAO {
         return (Department) q.uniqueResult();
     }
     public void attachDirty(Department department){sessionFactory.getCurrentSession().saveOrUpdate(department);}
+    public int max(){
+        String hql="select max(departmentId) from Department ";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
+    }
 }

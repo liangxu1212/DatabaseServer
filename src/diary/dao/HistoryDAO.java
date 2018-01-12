@@ -23,11 +23,12 @@ public class HistoryDAO {
     public List<History> listHistory(String from,String to){
         String hql="from History where 1=1";
         if(from!=null){
-            hql+=" and where historyTime>='"+from+"'";
+            hql+=" and historyTime>='"+from+"'";
         }
         if(to!=null){
-            hql+=" and where historyTime<='"+to+"'";
+            hql+=" and historyTime<='"+to+"'";
         }
+        System.out.println(hql);
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
     }

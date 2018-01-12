@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by MSI on 2018/1/6.
+ * Created by MSI on 2018/1/12.
  */
 @Entity
-@Table(name = "trip")
+@Table(name="trip")
 public class Trip {
     private int tripId;
     private Integer clerkId;
@@ -18,6 +18,8 @@ public class Trip {
     private Date applyTime;
     private Date updateTime;
     private String content;
+    private Date from;
+    private Date to;
 
     @Id
     @Column(name = "trip_id", nullable = false)
@@ -109,6 +111,26 @@ public class Trip {
         this.content = content;
     }
 
+    @Basic
+    @Column(name = "from", nullable = true)
+    public Date getFrom() {
+        return from;
+    }
+
+    public void setFrom(Date from) {
+        this.from = from;
+    }
+
+    @Basic
+    @Column(name = "to", nullable = true)
+    public Date getTo() {
+        return to;
+    }
+
+    public void setTo(Date to) {
+        this.to = to;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,6 +147,8 @@ public class Trip {
         if (applyTime != null ? !applyTime.equals(trip.applyTime) : trip.applyTime != null) return false;
         if (updateTime != null ? !updateTime.equals(trip.updateTime) : trip.updateTime != null) return false;
         if (content != null ? !content.equals(trip.content) : trip.content != null) return false;
+        if (from != null ? !from.equals(trip.from) : trip.from != null) return false;
+        if (to != null ? !to.equals(trip.to) : trip.to != null) return false;
 
         return true;
     }
@@ -140,6 +164,8 @@ public class Trip {
         result = 31 * result + (applyTime != null ? applyTime.hashCode() : 0);
         result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
         return result;
     }
 }

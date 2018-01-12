@@ -39,5 +39,10 @@ public class TripDAO {
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
     }
+    public int max(){
+        String hql="select max(tripId) from Trip";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
+    }
 
 }

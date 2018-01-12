@@ -181,6 +181,7 @@ public class ClerkController {
             jsonObject.put("message","late");
         }
         Checks check=new Checks();
+        check.setCheckId(checkDAO.max()+1);
         check.setCheckTime(d);
         check.setCategory(0);
         check.setClerkId(Integer.parseInt(id));
@@ -247,6 +248,7 @@ public class ClerkController {
             jsonObject.put("message","early");
         }
         Checks check=new Checks();
+        check.setCheckId(checkDAO.max()+1);
         check.setCheckTime(d);
         check.setCategory(1);
         check.setClerkId(Integer.parseInt(id));
@@ -278,6 +280,10 @@ public class ClerkController {
         ArrayList<Checks> list= (ArrayList<Checks>) checkDAO.listCheck(id,department_id,null,from,to);
         JSONArray array=new JSONArray();
         for(Checks checks:list){
+            Clerks clerks=clerksDAO.findById(String.valueOf(checks.getClerkId()));
+            if(department_id!=null){
+                if(clerks.getDepartmentId()!=Integer.valueOf(department_id))continue;
+            }
             JSONObject json= JSON.parseObject(JSON.toJSONString(checks));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String check = sdf.format(checks.getCheckTime());
@@ -291,7 +297,7 @@ public class ClerkController {
 
     }
     @RequestMapping(value="attachLeave",method=RequestMethod.POST)
-    public void attachLeave(HttpServletRequest request,HttpServletResponse response)throws IOException{
+    public void attachLeave(HttpServletRequest request,HttpServletResponse response) throws IOException, ParseException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
@@ -302,7 +308,9 @@ public class ClerkController {
         String clerkid=request.getParameter("clerk_id");
         String category=request.getParameter("category");
         String content=request.getParameter("content");
-        Leave l=new Leave();
+        String from=request.getParameter("from");
+        String to=request.getParameter("to");
+        Leaves l=new Leaves();
 
         History h=new History();
         h.setCategory(0);
@@ -312,12 +320,18 @@ public class ClerkController {
         if(leaveId!=null) {
             l = leaveDAO.findLeaveById(leaveId);
             h.setDescription("modify_leave");
+        }else {
+            l.setLeaveId(leaveDAO.max()+1);
         }
         historyDAO.attachDirty(h);
+
+        SimpleDateFormat daysdf=new SimpleDateFormat("yyyy-MM-dd");
         l.setClerkId(Integer.parseInt(clerkid));
         l.setCategory(Integer.parseInt(category));
         l.setContent(content);
         l.setState(1);
+        l.setFrom(daysdf.parse(from));
+        l.setTo(daysdf.parse(to));
         Date d=new Date();
         l.setApplyTime(d);
         l.setUpdateTime(d);
@@ -338,19 +352,23 @@ public class ClerkController {
        String from=request.getParameter("from");
        String to=request.getParameter("to");
        String departmentId=request.getParameter("department_id");
-       ArrayList<Leave> list= (ArrayList<Leave>) leaveDAO.search(id,from,to);
+       ArrayList<Leaves> list= (ArrayList<Leaves>) leaveDAO.search(id,from,to);
        JSONArray array=new JSONArray();
-       for(Leave leave:list){
+       for(Leaves leave:list){
            if(departmentId!=null){
                Clerks c=clerksDAO.findById(leave.getClerkId()+"");
                if(c.getDepartmentId()!=Integer.valueOf(departmentId))continue;
            }
            JSONObject json= JSON.parseObject(JSON.toJSONString(leave));
            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+           SimpleDateFormat daysdf=new SimpleDateFormat("yyyy-MM-dd");
            String apply = sdf.format(leave.getApplyTime());
            String update=sdf.format(leave.getUpdateTime());
            json.put("updateTime",update);
            json.put("applyTime",apply);
+           json.put("from",daysdf.format(leave.getFrom()));
+           json.put("to",daysdf.format(leave.getTo()));
            array.add(json);
        }
        jsonObject.put("data",array);
@@ -359,7 +377,7 @@ public class ClerkController {
        writer.flush();
    }
    @RequestMapping(value="attachTrip",method=RequestMethod.POST)
-   public void attachTrip(HttpServletRequest request,HttpServletResponse response)throws IOException{
+   public void attachTrip(HttpServletRequest request,HttpServletResponse response) throws IOException, ParseException {
        request.setCharacterEncoding("UTF-8");
        response.setContentType("application/json;charset=utf-8");
        response.setCharacterEncoding("utf-8");
@@ -370,8 +388,9 @@ public class ClerkController {
        String clerkid=request.getParameter("clerk_id");
        String category=request.getParameter("category");
        String content=request.getParameter("content");
+       String from=request.getParameter("from");
+       String to=request.getParameter("to");
        Trip t=new Trip();
-
        History h=new History();
        h.setCategory(0);
        h.setClerkId(Integer.valueOf(clerkid));
@@ -381,13 +400,19 @@ public class ClerkController {
        if(tripId!=null){
            t=tripDAO.findTripById(tripId);
            h.setDescription("modify_trip");
+       }else{
+           t.setTripId(tripDAO.max()+1);
        }
        historyDAO.attachDirty(h);
+       SimpleDateFormat daysdf=new SimpleDateFormat("yyyy-MM-dd");
        t.setCategory(Integer.parseInt(category));
        t.setClerkId(Integer.parseInt(clerkid));
+       t.setFrom(daysdf.parse(from));
+       t.setTo(daysdf.parse(to));
        Date d=new Date();
        t.setApplyTime(d);
        t.setUpdateTime(d);
+       t.setState(1);
        t.setContent(content);
        tripDAO.attachDirty(t);
        jsonObject.put("status",200);
@@ -416,10 +441,13 @@ public class ClerkController {
            }
            JSONObject json= JSON.parseObject(JSON.toJSONString(trip));
            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+           SimpleDateFormat daysdf=new SimpleDateFormat("yyyy-MM-dd");
            String apply = sdf.format(trip.getApplyTime());
            String update=sdf.format(trip.getUpdateTime());
            json.put("updateTime",update);
            json.put("applyTime",apply);
+           json.put("from",daysdf.format(trip.getFrom()));
+           json.put("to",daysdf.format(trip.getTo()));
            array.add(json);
        }
        jsonObject.put("data",array);

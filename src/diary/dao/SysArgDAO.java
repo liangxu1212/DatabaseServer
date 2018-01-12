@@ -39,4 +39,9 @@ public class SysArgDAO {
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return  q.list();
     }
+    public int max(){
+        String hql="select max(id) from SysArg ";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
+    }
 }

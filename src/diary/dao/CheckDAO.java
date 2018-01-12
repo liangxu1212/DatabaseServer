@@ -24,9 +24,6 @@ public class CheckDAO {
         if(id!=null){
             hql+=" and clerkId="+id;
         }
-        if(department_id!=null){
-            hql+=" and departmentId="+department_id;
-        }
         if(category!=null){
             hql+=" and category="+category;
         }
@@ -39,5 +36,10 @@ public class CheckDAO {
         System.out.println(hql);
         Query q=this.sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
+    }
+    public int max(){
+        String hql="select max(checkId) from Checks";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
     }
 }

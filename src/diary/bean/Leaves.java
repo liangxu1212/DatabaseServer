@@ -4,11 +4,11 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by MSI on 2018/1/6.
+ * Created by MSI on 2018/1/12.
  */
 @Entity
-@Table(name = "leave")
-public class Leave {
+@Table(name="leaves")
+public class Leaves {
     private int leaveId;
     private Integer clerkId;
     private Integer category;
@@ -18,6 +18,8 @@ public class Leave {
     private Date applyTime;
     private Date updateTime;
     private String content;
+    private Date from;
+    private Date to;
 
     @Id
     @Column(name = "leave_id", nullable = false)
@@ -109,22 +111,44 @@ public class Leave {
         this.content = content;
     }
 
+    @Basic
+    @Column(name = "from", nullable = true)
+    public Date getFrom() {
+        return from;
+    }
+
+    public void setFrom(Date from) {
+        this.from = from;
+    }
+
+    @Basic
+    @Column(name = "to", nullable = true)
+    public Date getTo() {
+        return to;
+    }
+
+    public void setTo(Date to) {
+        this.to = to;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Leave leave = (Leave) o;
+        Leaves leaves = (Leaves) o;
 
-        if (leaveId != leave.leaveId) return false;
-        if (clerkId != null ? !clerkId.equals(leave.clerkId) : leave.clerkId != null) return false;
-        if (category != null ? !category.equals(leave.category) : leave.category != null) return false;
-        if (state != null ? !state.equals(leave.state) : leave.state != null) return false;
-        if (commentId != null ? !commentId.equals(leave.commentId) : leave.commentId != null) return false;
-        if (comment != null ? !comment.equals(leave.comment) : leave.comment != null) return false;
-        if (applyTime != null ? !applyTime.equals(leave.applyTime) : leave.applyTime != null) return false;
-        if (updateTime != null ? !updateTime.equals(leave.updateTime) : leave.updateTime != null) return false;
-        if (content != null ? !content.equals(leave.content) : leave.content != null) return false;
+        if (leaveId != leaves.leaveId) return false;
+        if (clerkId != null ? !clerkId.equals(leaves.clerkId) : leaves.clerkId != null) return false;
+        if (category != null ? !category.equals(leaves.category) : leaves.category != null) return false;
+        if (state != null ? !state.equals(leaves.state) : leaves.state != null) return false;
+        if (commentId != null ? !commentId.equals(leaves.commentId) : leaves.commentId != null) return false;
+        if (comment != null ? !comment.equals(leaves.comment) : leaves.comment != null) return false;
+        if (applyTime != null ? !applyTime.equals(leaves.applyTime) : leaves.applyTime != null) return false;
+        if (updateTime != null ? !updateTime.equals(leaves.updateTime) : leaves.updateTime != null) return false;
+        if (content != null ? !content.equals(leaves.content) : leaves.content != null) return false;
+        if (from != null ? !from.equals(leaves.from) : leaves.from != null) return false;
+        if (to != null ? !to.equals(leaves.to) : leaves.to != null) return false;
 
         return true;
     }
@@ -140,6 +164,8 @@ public class Leave {
         result = 31 * result + (applyTime != null ? applyTime.hashCode() : 0);
         result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
         return result;
     }
 }

@@ -1,6 +1,6 @@
 package diary.dao;
 
-import diary.bean.Leave;
+import diary.bean.Leaves;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
@@ -16,16 +16,16 @@ public class LeaveDAO {
     public void setSessionFactory(SessionFactory sessionFactory){
         this.sessionFactory=sessionFactory;
     }
-    public void attachDirty(Leave leave){
+    public void attachDirty(Leaves leave){
         sessionFactory.getCurrentSession().saveOrUpdate(leave);
     }
-    public Leave findLeaveById(String id){
+    public Leaves findLeaveById(String id){
         String hql="from Leave where leaveId="+id;
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
-        return (Leave) q.uniqueResult();
+        return (Leaves) q.uniqueResult();
     }
-    public List<Leave> search(String id, String from, String to){
-        String hql="from Leave where 1=1";
+    public List<Leaves> search(String id, String from, String to){
+        String hql="from Leaves where 1=1";
         if(id!=null){
             hql+=" and clerkId="+id;
         }
@@ -38,5 +38,10 @@ public class LeaveDAO {
         System.out.println(hql);
         Query q=sessionFactory.getCurrentSession().createQuery(hql);
         return q.list();
+    }
+    public int max(){
+        String hql="select max(leaveId) from Leaves";
+        Query q=sessionFactory.getCurrentSession().createQuery(hql);
+        return (int) q.uniqueResult();
     }
 }
